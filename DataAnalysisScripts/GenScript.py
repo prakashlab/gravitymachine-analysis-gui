@@ -8,12 +8,9 @@ Created on Fri Feb  8 11:55:48 2019
 import imp
 import GravityMachineTrack 
 imp.reload(GravityMachineTrack)
-import cv2
-import sys
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-import os
+
 
 
 

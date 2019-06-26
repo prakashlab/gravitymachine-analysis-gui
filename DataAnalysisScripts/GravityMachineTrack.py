@@ -188,7 +188,9 @@ class gravMachineTrack:
         
     def openFile(self):
         
-        self.path = QtGui.QFileDialog.getExistingDirectory(None, "Open dataset folder")
+        filename, *rest = QtGui.QFileDialog.getOpenFileName(None, 'Open track file',self.path,"CSV fles (*.csv)")
+        
+        self.path, self.trackFile = os.path.split(filename)
         
         print('Opening dataset ...')
         
@@ -218,15 +220,14 @@ class gravMachineTrack:
                             if('.csv' in fileNames):
                                 trackFileNames.append(fileNames)
     
-                if(len(trackFileNames)==0):
-                    raise FileNotFoundError('CSV track was not found!')      
-                elif(len(trackFileNames)>=1):
-                    print('Choose the track file to use!')
-                                        
-                    trackFile,*rest = QtGui.QFileDialog.getOpenFileName(None, 'Open track file',self.path,"CSV fles (*.csv)")
-                    print(trackFile)
-                    head,self.trackFile = os.path.split(trackFile)
-                    print('Loaded {}'.format(self.trackFile))
+#                if(len(trackFileNames)==0):
+#                    raise FileNotFoundError('CSV track was not found!')      
+#                elif(len(trackFileNames)>=1):
+#                    print('Choose the track file to use!')
+#                                        
+#                    print(trackFile)
+#                    head,self.trackFile = os.path.split(trackFile)
+#                    print('Loaded {}'.format(self.trackFile))
 
         else:
             print("No dataset chosen")
@@ -579,9 +580,11 @@ class gravMachineTrack:
 #        PIV_Functions.plotPIVdata(frame_a_gs,x,y,u,v, orgContour=Contours)
         
         
-        if(masking is True):    
+        if(masking is True):   
+            # If the object's position is not given then use contours to find its position
             if(obj_position is None):
                 x_cent, y_cent, radius = PIV_Functions.findCircularContour(Contours)
+            # If the object's position is already given then use it!
             else:
                 x_cent, y_cent = obj_position
                 radius = round((self.OrgDim/2.0)*self.pixelPermm)
@@ -589,10 +592,10 @@ class gravMachineTrack:
             maskInsideCircle = PIV_Functions.pointInCircle(x,y,x_cent,y_cent,scaleFactor*radius)
             u_farfield, v_farfield = (u[~maskInsideCircle], v[~maskInsideCircle])
             
-            print(x_cent, y_cent)
-            print(radius)
-            
-            print(maskInsideCircle)
+#            print(x_cent, y_cent)
+#            print(radius)
+#            
+#            print(maskInsideCircle)
             
 #            plt.figure(1)
 ##            plt.scatter(x_cent, y_cent, 'ro')
@@ -601,9 +604,9 @@ class gravMachineTrack:
 #            plt.show()
             
             
-            plt.figure(2)
-            cv2.circle(frame_a_gs,(int(x_cent), int(y_cent)),int(scaleFactor*radius), color = (0,255,0))
-            cv2.imshow('frame',frame_a_gs)
+#            plt.figure(2)
+#            cv2.circle(frame_a_gs,(int(x_cent), int(y_cent)),int(scaleFactor*radius), color = (0,255,0))
+#            cv2.imshow('frame',frame_a_gs)
 #            cv2.waitKey(1)
        
         else:
