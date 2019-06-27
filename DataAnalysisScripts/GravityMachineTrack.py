@@ -231,7 +231,17 @@ class gravMachineTrack:
 
         else:
             print("No dataset chosen")
+          
+
+    def saveAnalysisData(self):
+
+        dataFrame_analysis = pd.DataFrame({'Organism':[],'Condition':[],'Size':[],'Time':[],'Xpos_raw':[],'Ypos_raw':[],'Zpos_raw':[],'Xpos':[],'Zpos':[],'Xvel':[],'Yvel':[],'Zvel':[]})
+        
+        
+
+        dataFrame_analysis.append(pd.DataFrame({'Organism':np.repeat(Organism,dataLen_noWalls,axis = 0),'OrgSize': np.repeat(Track_curr.OrgDim,dataLen_noWalls,axis = 0),'TrackName':np.repeat(currTrack[0],dataLen_noWalls,axis=0),'Condition':np.repeat(Conditions,dataLen_noWalls,axis=0),'VelocityX_noWall':Vx_noWalls,'VelocityY_noWall':Vy_noWalls,'VelocityZ_noWall':Vz_noWalls}))
             
+
                 
     def initializeTracker(self, tracker_type):
         major_ver, minor_ver, subminor_ver = cv2.__version__.split('.')
