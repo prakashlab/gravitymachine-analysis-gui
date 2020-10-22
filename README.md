@@ -1,7 +1,7 @@
 # Squid Analysis GUI 
 
 ## Introduction
-This is a custom GUI-based data analysis tool for visualizing and analyzing tracking microscopy datasets. This current repo is specifically tuned for tracking microscopy using Squid and is based on earlier such repo for Scale-free vertical Tracking Microscopy aka Gravity machine [D Krishnamurthy et. al : Scale-free Vertical Tracking Microscopy: Towards Bridging Scales in Biological Oceanography](https://doi.org/10.1101/610246). 
+This is a custom GUI-based data analysis tool for visualizing and analyzing tracking microscopy datasets. This current repo is specifically tuned for tracking microscopy using Squid and is based on earlier such repo for Scale-free vertical Tracking Microscopy aka Gravity machine [D Krishnamurthy et. al : Scale-free Vertical Tracking Microscopy](https://www.nature.com/articles/s41592-020-0924-7). 
 
 The program has a few run-time dependencies which can be installed by following *Installation.md*.
 
@@ -22,10 +22,12 @@ To change the playback speed of the video, navigate to *Video > Video Parameters
 
 
 ## To cite this tool:
+- Krishnamurthy, D., Li, H., Benoit du Rey, F. et al. Scale-free vertical tracking microscopy. Nat Methods (2020). https://www.nature.com/articles/s41592-020-0924-7
 
-Krishnamurthy, Deepak, Hongquan Li, François Benoit du Rey, Pierre Cambournac, Adam Larson, and Manu Prakash. "Scale-free Vertical Tracking Microscopy: Towards Bridging Scales in Biological Oceanography." bioRxiv (2019): 610246.
 
-
+## References
+- https://gravitymachine.org/
 
 #### Contributors: 
 Deepak Krishnamurthy, Francois benoit du Rey and Ethan Li
+
