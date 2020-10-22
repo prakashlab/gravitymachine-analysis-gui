@@ -1,9 +1,9 @@
-# Gravity Machine Analysis GUI 
+# Squid Analysis GUI 
 
 ## Introduction
-This is a custom GUI-based data analysis tool for visualizing and analyzing gravity machine datasets. Gravity machine is the nickname for Scale-free Vertical Tracking Microscopy, a method developed by [D Krishnamurthy et. al : Scale-free Vertical Tracking Microscopy: Towards Bridging Scales in Biological Oceanography](https://doi.org/10.1101/610246). 
+This is a custom GUI-based data analysis tool for visualizing and analyzing tracking microscopy datasets. This current repo is specifically tuned for tracking microscopy using Squid and is based on earlier such repo for Scale-free vertical Tracking Microscopy aka Gravity machine [D Krishnamurthy et. al : Scale-free Vertical Tracking Microscopy: Towards Bridging Scales in Biological Oceanography](https://doi.org/10.1101/610246). 
 
-The program has a few run-time dependencies which can be installed by following *GM_Analysis_Installation.md*.
+The program has a few run-time dependencies which can be installed by following *Installation.md*.
 
 To launch open a terminal, activate the appropriate virtual environment (conda activate ...). After this type:
 	
