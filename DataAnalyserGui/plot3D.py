@@ -229,14 +229,14 @@ class plot3D(gl.GLViewWidget):
         self.addItem(self.xygrid)
         
         self.yzgrid = Gd.GLGridItem(color=self.grid_color,thickness=self.size_grid)
-        self.yzgrid.setSize(10,3)
+        self.yzgrid.setSize(self.Length,self.Width)
         self.yzgrid.setSpacing(1,1,0)
         self.yzgrid.rotate(90, 0, 1, 0)
         self.yzgrid.translate(self.Length/2, self.Width/2, 5)
 #        self.addItem(self.yzgrid)
         
         self.xzgrid = Gd.GLGridItem(color=self.grid_color,thickness=self.size_grid)
-        self.xzgrid.setSize(self.Length,10)
+        self.xzgrid.setSize(self.Length,self.Width)
         self.xzgrid.setSpacing(1,1,0)
         self.xzgrid.rotate(90, 1, 0, 0)
         self.xzgrid.translate(0, self.Width, 5)

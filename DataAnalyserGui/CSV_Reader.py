@@ -79,6 +79,8 @@ class CSV_Reader(QtCore.QObject):
         for key in VARIABLE_HEADER_MAPPING:
             self.data[key] = np.array(self.df[VARIABLE_HEADER_MAPPING[key]])
             
+#        self.data['X_obj'] = -self.data['X_obj']
+#        self.data['Y_obj'] = -self.data['Y_obj']
         self.index_min=0
         self.index_max=len(self.df)-1
         
