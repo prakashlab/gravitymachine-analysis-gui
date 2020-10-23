@@ -16,6 +16,7 @@ from VideoWindow import VideoWindow
 from PlotWidget import PlotWidget
 from VideoSaver import VideoSaver
 
+from _def import *
 
 from aqua.qsshelper import QSSHelper
 
@@ -48,7 +49,7 @@ class CentralWidget(QtWidgets.QWidget):
         #Tool
         self.csv_reader=CSV_Reader(flip_z = False)
         
-        self.plot3D = plot3D()
+        self.plot3D = plot3D(Width = Chamber.WIDTH, Length = Chamber.LENGTH)
         
         self.panVSlider = QtGui.QSlider(QtCore.Qt.Vertical)
         self.panVSlider.setRange(-400, 400)
@@ -112,17 +113,17 @@ class CentralWidget(QtWidgets.QWidget):
         v_left_layout=QtGui.QVBoxLayout()
         v_left_layout.addWidget(self.video_window)
         
-        v_right_layout=QtGui.QVBoxLayout()
-        v_right_layout.addWidget(self.xplot)
-        v_right_layout.addWidget(self.yplot)
-        v_right_layout.addWidget(self.zplot)
+        # v_right_layout=QtGui.QVBoxLayout()
+        # v_right_layout.addWidget(self.xplot)
+        # v_right_layout.addWidget(self.yplot)
+        # v_right_layout.addWidget(self.zplot)
 
-        v_right_layout.setStretchFactor(self.xplot,1)
-        v_right_layout.setStretchFactor(self.yplot,1)
-        v_right_layout.setStretchFactor(self.zplot,1)
+        # v_right_layout.setStretchFactor(self.xplot,1)
+        # v_right_layout.setStretchFactor(self.yplot,1)
+        # v_right_layout.setStretchFactor(self.zplot,1)
         
         h_layout.addLayout(v_left_layout)
-        h_layout.addLayout(v_right_layout)
+        # h_layout.addLayout(v_right_layout)
         h_layout.addLayout(plot3D_layout)
 
 #        h_layout.addLayout(v_layout)
@@ -198,15 +199,15 @@ class CentralWidget(QtWidgets.QWidget):
         self.csv_reader.Time_data.connect(self.yplot.update_Time)
         self.csv_reader.Time_data.connect(self.zplot.update_Time)
         
-        self.csv_reader.Xobjet_data.connect(self.xplot.update_plot)
-        self.csv_reader.Yobjet_data.connect(self.yplot.update_plot)
-        self.csv_reader.Zobjet_data.connect(self.zplot.update_plot)
+        self.csv_reader.Xobj_data.connect(self.xplot.update_plot)
+        self.csv_reader.Yobj_data.connect(self.yplot.update_plot)
+        self.csv_reader.Zobj_data.connect(self.zplot.update_plot)
         self.csv_reader.fps_data.connect(self.update_recording_fps)
         
         self.csv_reader.Time_data.connect(self.plot3D.update_Time)
-        self.csv_reader.Xobjet_data.connect(self.plot3D.update_X)
-        self.csv_reader.Yobjet_data.connect(self.plot3D.update_Y)
-        self.csv_reader.Zobjet_data.connect(self.plot3D.update_Z)
+        self.csv_reader.Xobj_data.connect(self.plot3D.update_X)
+        self.csv_reader.Yobj_data.connect(self.plot3D.update_Y)
+        self.csv_reader.Zobj_data.connect(self.plot3D.update_Z)
         
         self.csv_reader.ImageTime_data.connect(self.video_window.initialize_image_time)
 
@@ -782,17 +783,17 @@ class MainWindow(QtWidgets.QMainWindow):
                
                 root, subFolderName = os.path.split(dirs)
                     
-                print(subFolderName[0:6])
-                if('images' in subFolderName):
-                   
-                   for fileNames in files:
-                       key = fileNames
-                       value = subFolderName
-                       self.image_dict[key]=value
-
+                
+                for file in files:
+                    if(file.lower().endswith('tif')):
+                        key = file
+                        value = dirs
+                        self.image_dict[key]=value
+                        
 
                 print('Loaded {}'.format(self.trackFile))
-
+            
+        
             self.central_widget.video_window.initialize_directory(self.directory, self.image_dict)
 
             self.central_widget.video_window.playButton.setEnabled(True)

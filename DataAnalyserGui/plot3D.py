@@ -25,7 +25,7 @@ class plot3D(gl.GLViewWidget):
     
     reset_sliders=QtCore.pyqtSignal(int)
     
-    def __init__(self, parent=None, Width=4, Length = 30):
+    def __init__(self, parent=None, Width=20, Length = 20):
         super().__init__(parent)
         
         self.Width = Width
@@ -54,7 +54,7 @@ class plot3D(gl.GLViewWidget):
             self.setBackgroundColor('w')
                 
         self.initial_center=[0,0,0]      #initial view center
-        self.initial_position=[20,0,-100] #initial position of the camera relatively to the center
+        self.initial_position=[20,90,0] #initial position of the camera relatively to the center
         
         #for manual pan with sider
         self.prev_pan_X=0
@@ -68,7 +68,7 @@ class plot3D(gl.GLViewWidget):
     
     def clear_grid(self):
         self.removeItem(self.xygrid)
-        self.removeItem(self.yzgrid)
+#        self.removeItem(self.yzgrid)
         self.removeItem(self.xzgrid)
     
     def clear_plot(self):
@@ -233,7 +233,7 @@ class plot3D(gl.GLViewWidget):
         self.yzgrid.setSpacing(1,1,0)
         self.yzgrid.rotate(90, 0, 1, 0)
         self.yzgrid.translate(self.Length/2, self.Width/2, 5)
-        self.addItem(self.yzgrid)
+#        self.addItem(self.yzgrid)
         
         self.xzgrid = Gd.GLGridItem(color=self.grid_color,thickness=self.size_grid)
         self.xzgrid.setSize(self.Length,10)
@@ -284,8 +284,8 @@ class plot3D(gl.GLViewWidget):
     #------------------------------------------------------------
         
     def set_initial_center(self):
-        self.initial_center=[0,0,(self.Z.max()+self.Z.min())/2]
-        self.pan(dx=self.initial_center[0], dy=self.initial_center[1], dz=self.initial_center[2], relative=False)
+        self.initial_center=[(self.X.max()+self.X.min())/2, (self.Y.max()+self.Y.min())/2, 0]
+        self.pan(dx=self.initial_center[0], dy=self.initial_center[1], dz=self.initial_center[2], relative="view")
         
     def reset_center(self):
         self.pan(dx=-self.initial_center[0], dy=-self.initial_center[1], dz=-self.initial_center[2], relative=False)
