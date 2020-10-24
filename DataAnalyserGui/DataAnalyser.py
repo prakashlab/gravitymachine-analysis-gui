@@ -19,10 +19,6 @@ from VideoSaver import VideoSaver
 from _def import *
 
 from aqua.qsshelper import QSSHelper
-
-                   
-# Testing to see branch changes
- 
 '''
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #                            Central Widget
@@ -47,7 +43,7 @@ class CentralWidget(QtWidgets.QWidget):
         self.zplot = PlotWidget('Z displacement', label = 'Z',color =(50, 100, 255))
         
         #Tool
-        self.csv_reader=CSV_Reader(flip_z = False)
+        self.csv_reader = CSV_Reader(flip_z = False)
         
         self.plot3D = plot3D(Width = Chamber.WIDTH, Length = Chamber.LENGTH)
         
@@ -56,7 +52,7 @@ class CentralWidget(QtWidgets.QWidget):
         self.panVSlider.setValue(0)
         
         self.panHSlider = QtGui.QSlider(QtCore.Qt.Horizontal)
-        self.panHSlider.setRange(-200, 200)
+        self.panHSlider.setRange(-400, 400)
         self.panHSlider.setValue(0)
         
         self.home3Dbutton=QtGui.QPushButton()
@@ -192,6 +188,10 @@ class CentralWidget(QtWidgets.QWidget):
         else:
             self.image_saver.wait() #all element in the queue should be processed
             self.video_saver.stop() #release the video
+            
+    def update_pixelpermm(self, value):
+        
+        self.pixelpermm = value
 
     def connect_all(self):
         
@@ -215,6 +215,10 @@ class CentralWidget(QtWidgets.QWidget):
 
         self.csv_reader.ImageNames_data.connect(self.video_window.initialize_image_names)
         
+        
+        # metadata
+        self.csv_reader.pixelpermm_data.connect(self.video_window.update_pixelsize)
+        
         # Added Image Index as another connection
 #        self.csv_reader.ImageIndex_data.connect(self.video_window.initialize_image_index)
         
@@ -222,8 +226,8 @@ class CentralWidget(QtWidgets.QWidget):
         self.video_window.update_plot.connect(self.yplot.update_cursor)
         self.video_window.update_plot.connect(self.zplot.update_cursor)
         
-        self.panHSlider.valueChanged.connect(self.plot3D.pan_X)
-        self.panVSlider.valueChanged.connect(self.plot3D.pan_Z)
+        self.panHSlider.valueChanged.connect(self.plot3D.pan_Y)
+        self.panVSlider.valueChanged.connect(self.plot3D.pan_X)
         self.home3Dbutton.clicked.connect(self.plot3D.reset_view)
         self.plot3D.reset_sliders.connect(self.reset_sliders)
         self.video_window.update_3Dplot.connect(self.plot3D.move_marker)
@@ -802,7 +806,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
             # Open the CSV file before initializing parameters since otherwise it 
             # tries to open image before refreshing the image name list
-            self.central_widget.csv_reader.open_newCSV(self.directory, self.trackFile, Tmin = 0 , Tmax = 3600)
+            self.central_widget.csv_reader.open_newCSV(self.directory, self.trackFile, Tmin = 0 , Tmax = 0)
             self.central_widget.video_window.initialize_parameters()
 
             # Need to connect the new Image Names

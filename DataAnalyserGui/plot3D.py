@@ -37,9 +37,9 @@ class plot3D(gl.GLViewWidget):
         self.y_offset = 0
         self.y_offset_prev = self.y_offset
 
-        self.size_traj = 0.4
+        self.size_traj = 0.1
         self.size_grid = 2
-        self.size_marker = 2
+        self.size_marker = 0.5
         self.cmap=cmocean.cm.deep
         self.Z_curr = 0
         self.Z_prev = 0
@@ -58,6 +58,7 @@ class plot3D(gl.GLViewWidget):
         
         #for manual pan with sider
         self.prev_pan_X=0
+        self.prev_pan_Y = 0
         self.prev_pan_Z=0
         
         self.initialize_plot()
@@ -284,20 +285,26 @@ class plot3D(gl.GLViewWidget):
     #------------------------------------------------------------
         
     def set_initial_center(self):
-        self.initial_center=[(self.X.max()+self.X.min())/2, (self.Y.max()+self.Y.min())/2, 0]
-        self.pan(dx=self.initial_center[0], dy=self.initial_center[1], dz=self.initial_center[2], relative="view")
+        self.initial_center=[0,0,0]
+        self.pan(dx=self.initial_center[0], dy=self.initial_center[1], dz=self.initial_center[2], relative=False)
         
     def reset_center(self):
-        self.pan(dx=-self.initial_center[0], dy=-self.initial_center[1], dz=-self.initial_center[2], relative=False)
+        self.pan(dx=-self.initial_center[0], dy=-self.initial_center[1], dz=-self.initial_center[2], relative = False)
         self.initial_center=[0,0,0]
         
     def pan_X(self,value):
-        self.pan(dx=value-self.prev_pan_X, dy=0, dz=0, relative=True)
+        print(value - self.prev_pan_X)
+        self.pan(dx=value-self.prev_pan_X, dy=0, dz=0, relative=False)
         self.prev_pan_X=value
     
+    def pan_Y(self,value):
+        print(value - self.prev_pan_Y)
+        self.pan(dx=0, dy = value-self.prev_pan_Y, dz=0, relative=False)
+        self.prev_pan_Y=value
+        
     def pan_Z(self,value):
         value=(self.Zmax-self.Zmin)/10*value
-        self.pan(dx=0, dy=0, dz=value-self.prev_pan_Z, relative=True)
+        self.pan(dx=0, dy=0, dz=value-self.prev_pan_Z, relative=False)
         self.prev_pan_Z=value
     
     def reset_view(self):

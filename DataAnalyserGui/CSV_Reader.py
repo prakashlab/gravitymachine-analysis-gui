@@ -26,6 +26,8 @@ class CSV_Reader(QtCore.QObject):
     ImageNames_data = QtCore.pyqtSignal(np.ndarray)
     ImageTime_data = QtCore.pyqtSignal(np.ndarray)
     LED_intensity_data = QtCore.pyqtSignal(np.ndarray)
+    pixelpermm_data = QtCore.pyqtSignal(float)
+    objective_data = QtCore.pyqtSignal(str)
 #    ImageIndex_data = QtCore.pyqtSignal(np.ndarray)
     
     
@@ -46,6 +48,7 @@ class CSV_Reader(QtCore.QObject):
         self.W =Width
         self.L = Length
         self.df = None
+        self.metadata = None
         self.flip_z = flip_z
     
     
@@ -65,6 +68,13 @@ class CSV_Reader(QtCore.QObject):
         
         
         self.df = pd.read_csv(trackPath)
+        
+        try:
+            self.metadata = pd.read_csv(os.path.join(directory, 'metadata.csv'))
+        except:
+            print("Metadata file not found")
+        
+        
         
         self.df[VARIABLE_HEADER_MAPPING['Time']] = self.df[VARIABLE_HEADER_MAPPING['Time']] - self.df[VARIABLE_HEADER_MAPPING['Time']][0]
         if(Tmax == 0 or Tmax is None):
@@ -87,6 +97,7 @@ class CSV_Reader(QtCore.QObject):
         #send data on T, X,Y,Z to the plot, depending on the index range chosen        
         self.send_data()
         
+        self.send_metadata()
         #Time and name of the image for the video reader
         self.send_image_time()
         
@@ -99,6 +110,11 @@ class CSV_Reader(QtCore.QObject):
         self.Yobj_data.emit(self.data['Y_obj'][self.index_min:self.index_max+1])
         self.Zobj_data.emit(self.data['Z_obj'][self.index_min:self.index_max+1])
         print('data sent')
+        
+    def send_metadata(self):
+        
+        self.pixelpermm_data.emit(float(self.metadata['PixelPermm'][0]))
+        self.objective_data.emit(str(self.metadata['Objective'][0]))
         
     def send_image_time(self):
         cropped_ImageNames = self.data['Image name'][self.index_min:self.index_max+1]

@@ -339,6 +339,7 @@ class VideoWindow(QtWidgets.QWidget):
                 
     def update_pixelsize(self, PixelPermm):
         self.PixelPermm = PixelPermm
+        print('Updated pixel size to : {}'.format(self.PixelPermm))
 
     def scaleBar_offset(self):
         return int(20*self.imW/720)
