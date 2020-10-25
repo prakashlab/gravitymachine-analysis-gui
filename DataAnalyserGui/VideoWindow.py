@@ -123,7 +123,7 @@ class VideoWindow(QtWidgets.QWidget):
         # self.timeStampPos_base = (20, 40)
         # self.scaleBar_textOffset_base = (180,25)
 
-        self.scalebarSize = 250
+        self.scalebarSize = 50
         self.baseFontScale = 1
         self.timeStampPos_base = (20,50)
         self.scaleBar_textOffset_base = (220,25)

@@ -6,7 +6,7 @@ import os
 
 import cv2
 import numpy as np
-
+import pandas as pd
 from pyqtgraph.Qt import QtWidgets,QtCore, QtGui #possible to import form PyQt5 too ... what's the difference? speed? 
 
 
@@ -15,6 +15,7 @@ from plot3D import plot3D
 from VideoWindow import VideoWindow
 from PlotWidget import PlotWidget
 from VideoSaver import VideoSaver
+
 
 from _def import *
 
@@ -33,7 +34,7 @@ class CentralWidget(QtWidgets.QWidget):
         
 
         self.video_saver=VideoSaver()
-        self.isImageSaver=False  #True: image_saver will be chose in place of video saver
+        self.isImageSaver = False  #True: image_saver will be chose in place of video saver
         
         #widgets
         self.video_window=VideoWindow(PixelPermm = 314)
@@ -189,9 +190,6 @@ class CentralWidget(QtWidgets.QWidget):
             self.image_saver.wait() #all element in the queue should be processed
             self.video_saver.stop() #release the video
             
-    def update_pixelpermm(self, value):
-        
-        self.pixelpermm = value
 
     def connect_all(self):
         
@@ -219,6 +217,9 @@ class CentralWidget(QtWidgets.QWidget):
         # metadata
         self.csv_reader.pixelpermm_data.connect(self.video_window.update_pixelsize)
         
+        
+        
+        
         # Added Image Index as another connection
 #        self.csv_reader.ImageIndex_data.connect(self.video_window.initialize_image_index)
         
@@ -241,6 +242,99 @@ class CentralWidget(QtWidgets.QWidget):
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #                   Window for Track parameters
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+class options_Analysis_Dialog(QtGui.QDialog):
+    
+    T_min_data = QtCore.pyqtSignal(float)
+    T_max_data = QtCore.pyqtSignal(float)
+    name_data = QtCore.pyqtSignal(str)
+    condition_data = QtCore.pyqtSignal(str)
+    save_signal = QtCore.pyqtSignal()
+    
+    
+    def __init__(self, track_name = '', track_condition = '',T_min = 0, T_max = 0, parent = None):
+        
+        super().__init__()
+        self.setWindowTitle('Track analysis')
+        
+        self.track_name = track_name
+        self.track_condition = track_condition
+        self.T_min = T_min
+        self.T_max = T_max
+     
+        
+        self.add_components()
+        
+    def add_components(self):
+        
+        self.name_textbox = QtGui.QLineEdit(self.track_name)
+        
+        self.condition_textbox = QtGui.QLineEdit(self.track_condition)
+        
+        self.min_time_spinbox = QtGui.QSpinBox()
+        self.min_time_spinbox.setMinimum(self.T_min)
+        self.min_time_spinbox.setMaximum(self.T_max)
+        self.min_time_spinbox.setValue(self.T_min)
+        
+        print(int(self.T_max))
+        self.max_time_spinbox = QtGui.QSpinBox()
+        self.max_time_spinbox.setMinimum(self.T_min)
+        self.max_time_spinbox.setMaximum(self.T_max)
+        self.max_time_spinbox.setValue(self.T_max)
+        
+        self.save_button = QtGui.QPushButton("Save")
+        self.save_button.setCheckable(False)
+        self.save_button.setChecked(False)
+        
+        
+        T_min_layout = QtGui.QVBoxLayout()
+        T_min_layout.addWidget(QtGui.QLabel("T min"))
+        T_min_layout.addWidget(self.min_time_spinbox)
+        
+        T_max_layout = QtGui.QVBoxLayout()
+        T_max_layout.addWidget(QtGui.QLabel("T max"))
+        T_max_layout.addWidget(self.max_time_spinbox)
+        
+        grid_layout = QtGui.QGridLayout()
+        
+        grid_layout.addWidget(QtGui.QLabel('Track name'),0,0,1,1)
+        grid_layout.addWidget(self.name_textbox, 0,1,1,1)
+        grid_layout.addWidget(QtGui.QLabel('Condition'),1,0,1,1)
+        grid_layout.addWidget(self.condition_textbox, 1,1,1,1)
+        grid_layout.addLayout(T_min_layout, 2,0,1,1)
+        grid_layout.addLayout(T_max_layout, 2,1,1,1)
+        grid_layout.addWidget(self.save_button,3,0,1,1)
+        
+        # Connections
+        self.name_textbox.textChanged.connect(self.set_name)
+        self.condition_textbox.textChanged.connect(self.set_condition)
+        self.min_time_spinbox.valueChanged.connect(self.set_min_time)
+        self.max_time_spinbox.valueChanged.connect(self.set_max_time)
+        self.save_button.clicked.connect(self.save_analysis_data)
+        
+        self.setLayout(grid_layout)
+        
+        self.setStyleSheet(qss)
+
+
+
+
+    def set_name(self, text):
+        self.name_data.emit(text)
+    
+    def set_condition(self, text):
+        self.condition_data.emit(text)
+    
+    def set_min_time(self, value):
+        self.T_min_data.emit(value)
+    def set_max_time(self, value):
+        self.T_max_data.emit(value)
+        
+    def save_analysis_data(self):
+        print('Sending save signal')
+        self.save_signal.emit()
+        
+
+        
 
 
 class optionsTrack_Dialog(QtGui.QDialog):
@@ -719,7 +813,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.image_dict = {}
         # Detect the CSV file name instead of assuming one.
         self.trackFile = []
+        self.T_min = 0
+        self.T_max = 0
         
+        self.track_name = ''
+        self.track_condition = ''
+        self.T_min_analysis = 0
+        self.T_max_analysis = 0
         
         # Create menu bar and add action
         menuBar = self.menuBar()
@@ -758,6 +858,11 @@ class MainWindow(QtWidgets.QMainWindow):
         optionVideo.setStatusTip('Video Parameters')
         optionVideo.triggered.connect(self.options_VideoParams)
         
+        optionAnalysis = QtGui.QAction(QtGui.QIcon('open.png'), '&Analysis Parameters', self)        
+        optionAnalysis.setShortcut('Ctrl+A')
+        optionAnalysis.setStatusTip('Analysis Parameters')
+        optionAnalysis.triggered.connect(self.options_analysis)
+        
         fileMenu.addAction(openAction)
         fileMenu.addAction(save3DplotAction)
         # fileMenu.addAction(option3DplotAction)
@@ -765,11 +870,13 @@ class MainWindow(QtWidgets.QMainWindow):
         editmenu.addAction(optionTrack)
         editmenu.addAction(option3DplotAction)
         editmenu.addAction(optionTimeInterval)
+        editmenu.addAction(optionAnalysis)
         Videomenu.addAction(optionVideo)
         
         self.central_widget.video_window.imageName.connect(self.update_statusBar)
         self.central_widget.csv_reader.Time_data.connect(self.initialize_image_time)
         
+        self.central_widget.csv_reader.Time_data.connect(self.set_time_bounds)
         
     def openFile(self):
         print('Opening dataset ...')
@@ -847,6 +954,15 @@ class MainWindow(QtWidgets.QMainWindow):
         options_dialog_video.playback_speed.connect(self.central_widget.video_window.update_playback_speed)
         options_dialog_video.exec_()
 
+    def options_analysis(self):
+        
+        options_dialog_analysis = options_Analysis_Dialog(track_name = self.track_name, track_condition = self.track_condition, T_min = self.T_min, T_max = self.T_max)
+        options_dialog_analysis.name_data.connect(self.set_name)
+        options_dialog_analysis.condition_data.connect(self.set_condition)
+        options_dialog_analysis.T_min_data.connect(self.set_T_min)
+        options_dialog_analysis.T_max_data.connect(self.set_T_max)
+        options_dialog_analysis.save_signal.connect(self.save_analysis_file)
+        options_dialog_analysis.exec_()
 
 
 
@@ -856,6 +972,35 @@ class MainWindow(QtWidgets.QMainWindow):
         options_dialog_time = options_TimeInt(self.image_time)
         options_dialog_time.index_data.connect(self.central_widget.csv_reader.update_index)
         options_dialog_time.exec_()
+        
+    def set_time_bounds(self, data):
+        self.T_min = min(data)
+        self.T_max = max(data)
+        self.T_min_analysis = self.T_min
+        self.T_max_analysis = self.T_max
+    
+    def set_name(self, text):
+        self.track_name = text
+        
+    def set_condition(self, text):
+        self.track_condition = text
+        
+    def set_T_min(self, data):
+        self.T_min_analysis = data
+        
+    def set_T_max(self, data):
+        self.T_max_analysis = data
+    
+    def save_analysis_file(self):
+        
+        print('Saving analysis file...')
+        analysis_data = pd.DataFrame({'Organism':[], 'Condition':[], 'Tmin':[], 'Tmax':[]})
+        
+        analysis_data = analysis_data.append(pd.DataFrame({'Organism':[self.track_name], 'Condition':[self.track_condition], 'Tmin':[self.T_min_analysis], 'Tmax':[self.T_max_analysis]}))
+        
+        analysis_data.to_csv(os.path.join(self.directory, 'analysis_data.csv'))
+        
+        print('Saved analysis file')
         
     def closeEvent(self, event):
         
