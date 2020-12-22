@@ -207,6 +207,8 @@ class CentralWidget(QtWidgets.QWidget):
         self.csv_reader.Yobj_data.connect(self.plot3D.update_Y)
         self.csv_reader.Zobj_data.connect(self.plot3D.update_Z)
         
+        self.csv_reader.ObjLoc_data.connect(self.video_window.update_object_location)
+        
         self.csv_reader.ImageTime_data.connect(self.video_window.initialize_image_time)
 
         # self.csv_reader.LED_intensity_data.connect(self.video_window.initialize_led_intensity)

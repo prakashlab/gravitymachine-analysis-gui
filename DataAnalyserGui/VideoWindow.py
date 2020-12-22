@@ -115,6 +115,8 @@ class VideoWindow(QtWidgets.QWidget):
         self.imW = 0
         self.imH = 0
         self.PixelPermm = PixelPermm
+        self.X_image = None
+        self.Z_image = None
 
         # Font and Font position parameters for annotating images
         # Settings for 720p images
@@ -206,7 +208,7 @@ class VideoWindow(QtWidgets.QWidget):
             print(self.imH, self.imW)
             self.newData = False
         
-        if(len(self.Image_Time) is not 0):
+        if(len(self.Image_Time) != 0):
             currTime = self.Image_Time[self.current_track_index]
             # print('Current Image Time: {}'.format(currTime))
             cv2.putText(image, '{:.2f}'.format(np.round(currTime, decimals = 2))+'s', self.timeStampPosition(), font, self.fontScale(), (255, 255, 255), 2, cv2.LINE_AA)
@@ -215,7 +217,12 @@ class VideoWindow(QtWidgets.QWidget):
             #     cv2.putText(image, 'Light ON', (580, 30), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
             # else:
             #     cv2.putText(image, 'Light OFF', (580, 30), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
-
+               
+            # Draw a box to show the tracked object
+#            box_size = 100
+#            start_point = (int(self.imW/2 + self.PixelPermm*self.X_image[self.current_track_index] - box_size/2), int(self.imH/2 - self.PixelPermm*self.Z_image[self.current_track_index] - box_size/2))
+#            end_point = (start_point[0] + box_size, start_point[1] + box_size)
+#            cv2.rectangle(image, start_point, end_point, (255,255,255), 3)
 
 
 
@@ -340,7 +347,14 @@ class VideoWindow(QtWidgets.QWidget):
     def update_pixelsize(self, PixelPermm):
         self.PixelPermm = PixelPermm
         print('Updated pixel size to : {}'.format(self.PixelPermm))
-
+    
+    def update_object_location(self, X_image, Z_image):
+        self.X_image = X_image
+        self.Z_image = Z_image
+        print(self.X_image)
+        print(self.Z_image)
+        print('Updated object locations within image')
+    
     def scaleBar_offset(self):
         return int(20*self.imW/720)
 

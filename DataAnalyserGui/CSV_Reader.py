@@ -23,6 +23,7 @@ class CSV_Reader(QtCore.QObject):
     Xobj_data = QtCore.pyqtSignal(np.ndarray)
     Yobj_data = QtCore.pyqtSignal(np.ndarray)
     Zobj_data = QtCore.pyqtSignal(np.ndarray)
+    ObjLoc_data = QtCore.pyqtSignal(np.ndarray, np.ndarray)
     ImageNames_data = QtCore.pyqtSignal(np.ndarray)
     ImageTime_data = QtCore.pyqtSignal(np.ndarray)
     LED_intensity_data = QtCore.pyqtSignal(np.ndarray)
@@ -109,6 +110,7 @@ class CSV_Reader(QtCore.QObject):
         self.Xobj_data.emit(self.data['X_obj'][self.index_min:self.index_max+1])
         self.Yobj_data.emit(self.data['Y_obj'][self.index_min:self.index_max+1])
         self.Zobj_data.emit(self.data['Z_obj'][self.index_min:self.index_max+1])
+        self.ObjLoc_data.emit(self.data['X_image'][self.index_min:self.index_max+1], self.data['Z_image'][self.index_min:self.index_max+1])
         print('data sent')
         
     def send_metadata(self):
