@@ -32,7 +32,7 @@ class CSV_Reader(QtCore.QObject):
 #    ImageIndex_data = QtCore.pyqtSignal(np.ndarray)
     
     
-    def __init__(self, parent=None, Width = 5, Length = 30, flip_z = False):
+    def __init__(self, parent=None, flip_z = False):
         super(CSV_Reader, self).__init__(parent)
         # File name for .csv file is now auto-detected
         self.file_name=''
@@ -46,8 +46,6 @@ class CSV_Reader(QtCore.QObject):
         self.ImageNames=np.array([])
         self.index_min=0
         self.index_max=0
-        self.W =Width
-        self.L = Length
         self.df = None
         self.metadata = None
         self.flip_z = flip_z
@@ -67,15 +65,13 @@ class CSV_Reader(QtCore.QObject):
 
         trackPath = os.path.join(directory, self.file_name)
         
-        
+        # Read the data
         self.df = pd.read_csv(trackPath)
         
         try:
             self.metadata = pd.read_csv(os.path.join(directory, 'metadata.csv'))
         except:
             print("Metadata file not found")
-        
-        
         
         self.df[VARIABLE_HEADER_MAPPING['Time']] = self.df[VARIABLE_HEADER_MAPPING['Time']] - self.df[VARIABLE_HEADER_MAPPING['Time']][0]
         if(Tmax == 0 or Tmax is None):
@@ -89,9 +85,7 @@ class CSV_Reader(QtCore.QObject):
 
         for key in VARIABLE_HEADER_MAPPING:
             self.data[key] = np.array(self.df[VARIABLE_HEADER_MAPPING[key]])
-            
-#        self.data['X_obj'] = -self.data['X_obj']
-#        self.data['Y_obj'] = -self.data['Y_obj']
+   
         self.index_min=0
         self.index_max=len(self.df)-1
         
