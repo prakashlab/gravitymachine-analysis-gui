@@ -238,7 +238,7 @@ class VideoWindow(QtWidgets.QWidget):
 
             cv2.line(image, (x_start, y_start), (x_end, y_end), color =(255,255,255), thickness = int(self.imH*5/720),lineType = cv2.LINE_AA)
 
-        self.image_widget.refresh_image(image, grayscale=True)
+        self.image_widget.refresh_image(image, grayscale=False)
         self.imageName.emit(image_name)
         if self.isRecording:
             # print('Current Image : {}'.format(image_name))

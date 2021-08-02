@@ -796,7 +796,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         
-        self.setWindowTitle('Gravity Machine Data Analyser')
+        self.setWindowTitle('Squid Tracking Data Analyser')
         self.setWindowIcon(QtGui.QIcon('icon/icon.png'))
         self.statusBar().showMessage('Ready')
         
@@ -898,7 +898,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     
                 
                 for file in files:
-                    if(file.lower().endswith('tif')):
+                    if(file.lower().endswith('tif') or file.lower().endswith('bmp') ):
                         key = file
                         value = dirs
                         self.image_dict[key]=value
